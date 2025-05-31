@@ -17,7 +17,7 @@
 *.userprefs
 
 # Mono auto generated files
-mono_crash.*
+monoCrash.*
 
 # Build results
 [Dd]ebug/
@@ -105,7 +105,7 @@ StyleCopReport.xml
 *.scc
 
 # Chutzpah Test files
-_Chutzpah*
+Chutzpah*
 
 # Visual C++ cache files
 ipch/
@@ -250,12 +250,12 @@ orleans.codegen.cs
 # (https://github.com/github/gitignore/pull/2483#issue-259490424)
 #*.snk
 
-# Since there are multiple workflows, uncomment next line to ignore bower_components
+# Since there are multiple workflows, uncomment next line to ignore bowerComponents
 # (https://github.com/github/gitignore/pull/1529#issuecomment-104372622)
-#bower_components/
+#bowerComponents/
 
 # RIA/Silverlight projects
-Generated_Code/
+GeneratedCode/
 
 # Backup & report files from converting an old project file
 # to a newer Visual Studio version. Backup files are not needed,

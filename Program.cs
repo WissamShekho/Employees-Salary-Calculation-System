@@ -4,16 +4,16 @@
     {
         static void Main(string[] args)
         {
-            //Manager m1 = new Manager(1, "Wissam", "Shekho", 50);
-            //Console.WriteLine(m1.SalaryReport());
+            Manager manager = new Manager(101, "Muhammed", "Khalid", 50);
+            Console.WriteLine(manager.SalaryReport());
 
-            //SalesAgent salesAgent = new SalesAgent(1, "Wissam", "Shekho", 20, 10_000);
-            //Console.WriteLine(salesAgent.SalaryReport());
+            SalesAgent salesAgent = new SalesAgent(102, "Fadi", "Abdullah", 20, 10_000);
+            Console.WriteLine(salesAgent.SalaryReport());
 
-            //Handyman handyman = new Handyman(1, "Wissam", "Shekho", 100);
-            //Console.WriteLine(handyman.SalaryReport());
+            Handyman handyman = new Handyman(1, "Khalid", "Sami", 51);
+            Console.WriteLine(handyman.SalaryReport());
 
-            SoftwareEngineer softwareEngineer = new SoftwareEngineer(1, "Wissam", "Shekho", 50, 10);
+            SoftwareEngineer softwareEngineer = new SoftwareEngineer(1, "Ahmed", "Sabri", 42, 10);
             Console.WriteLine(softwareEngineer.SalaryReport());
 
             Console.ReadKey();

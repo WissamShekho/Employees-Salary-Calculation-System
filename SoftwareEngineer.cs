@@ -6,105 +6,56 @@ using System.Threading.Tasks;
 
 namespace EmployeesSalaryCalculationSystem
 {
-    internal class SoftwareEngineer
+    internal class SoftwareEngineer : Employee
     {
-        private const decimal HourlyRate = 10.0m;
         private const decimal TrainingAllowance = 50.0m;
-        private const decimal TaxPercentage = 0.1m;
-        private const decimal HourlyOvertimePercentage = 1.5m;
         private const decimal Bonus = 40.0m;
-        private const int ExpectedHours = 40;
-        private const int StoryPointTarget = 8;
+        private const int TasksTarget = 8;
 
-        public int ID { get; }
-        public int LoggedHours { get; }
-        public string FirstName { set; get; } = string.Empty;  // Nullable referance type is enabled
-        public string LastName { set; get; } = string.Empty;
-        public string FullName { get; } = string.Empty;
+        private readonly int TasksCompleted;
 
-        private decimal BonusAmount { get; set; }
-        private int StoryPoint { get; set; }
-        private int BasicHours { get; set; }
-        private int OvertimeHours { get; set; }
-
-        public SoftwareEngineer(int id, string firstName, string lastName, int loggedHours, int storyPoint)
+        public SoftwareEngineer(int id, string firstName, string lastName, int loggedHours, int tasksCompleted) :
+            base(id, 10, loggedHours, firstName, lastName)
         {
-            ArgumentOutOfRangeException.ThrowIfNegative(loggedHours);
-            ArgumentOutOfRangeException.ThrowIfNegative(storyPoint);
-
-            ID = id;
-            FirstName = firstName;
-            LastName = lastName;
-            LoggedHours = loggedHours;
-            StoryPoint = storyPoint;
-
-            FullName = firstName + " " + LastName;
-
-            if (loggedHours >= ExpectedHours)
-            {
-                BasicHours = ExpectedHours;
-                OvertimeHours = LoggedHours - ExpectedHours;
-            }
-            else
-            {
-                BasicHours = LoggedHours;
-                OvertimeHours = 0;
-            }
-
-            BonusAmount = storyPoint >= StoryPointTarget ? Bonus : 0;
+            ArgumentOutOfRangeException.ThrowIfNegative(TasksCompleted);
+            TasksCompleted = tasksCompleted;
         }
-
-        private decimal _calculateNetSalary(decimal grossPay, decimal taxAmount)
+        private static decimal CalculateGrossPay(decimal basicSalary, decimal overtimeSalary, decimal trainingAllowance, decimal TasksCompleted)
         {
-            return grossPay - taxAmount;
+            return basicSalary + overtimeSalary + trainingAllowance + (TasksCompleted >= TasksTarget ? Bonus : 0);
         }
-        private decimal _calculateTaxAmount(decimal grossPay, decimal taxPercentage)
+        private static decimal CalculateBonus(int tasksCompleted, int tasksTarget, decimal Bonus)
         {
-            return grossPay * (decimal)taxPercentage;
+            return tasksCompleted >= tasksTarget ? Bonus : 0;
         }
-
-        private decimal _calculateGrossPay(decimal basicSalary, decimal overtimeSalary, decimal trainingAllowance, decimal storyPoint)
+        public override string SalaryReport()
         {
-            return basicSalary + overtimeSalary + trainingAllowance + (storyPoint >= StoryPointTarget ? Bonus : 0);
-        }
-
-        private decimal _calculateOvertimeSalary(int loggedHours, int basicHours, decimal hourlyRate, decimal hourlyOvertimePercentage)
-        {
-            return (loggedHours - basicHours) * (decimal)hourlyOvertimePercentage * hourlyRate;
-        }
-
-        private decimal _calculateBasicSalary(int expectedHours, decimal hourlyRate)
-        {
-            return expectedHours * hourlyRate;
-        }
-
-        public string SalaryReport()
-        {
-            decimal BasicSalary = _calculateBasicSalary(BasicHours, HourlyRate);
-            decimal OvertimeSalary = _calculateOvertimeSalary(LoggedHours, BasicHours, HourlyRate, HourlyOvertimePercentage);
-            decimal GrossPay = _calculateGrossPay(BasicSalary, OvertimeSalary, TrainingAllowance, StoryPoint);
-            decimal TaxAmount = _calculateTaxAmount(GrossPay, TaxPercentage);
-            decimal NetSalary = _calculateNetSalary(GrossPay, TaxAmount);
+            decimal BasicSalary = CalculateBasicSalary(BasicLoggedHours, HourlyRate);
+            decimal OvertimeSalary = CalculateOvertimeSalary(OvertimeHours, HourlyRate, PayrollConstants.OvertimeRateMultiplier);
+            decimal BonusAmount = CalculateBonus(TasksCompleted, TasksTarget, Bonus);
+            decimal GrossPay = CalculateGrossPay(BasicSalary, OvertimeSalary, TrainingAllowance, TasksCompleted);
+            decimal TaxAmount = CalculateTaxAmount(GrossPay, PayrollConstants.TaxPercentage);
+            decimal NetSalary = CalculateNetSalary(GrossPay, TaxAmount);
 
             string Report = $@"
                 
                 ID  : {ID}
                 Name: {FullName}
             ___________________________________________
-                Expected Hours: {ExpectedHours}
+                Expected Hours: {PayrollConstants.ExpectedHours}
                 Logged Hours: {LoggedHours}
-                Basic Hours: {BasicHours}
+                Basic Hours: {BasicLoggedHours}
                 Overtime Hours: {OvertimeHours}
                 Hourly Rate: ${HourlyRate}
-                Hourly Overtime Percentage: {HourlyOvertimePercentage}x
-                Basic Salary: {BasicHours} * ${HourlyRate} = ${BasicSalary}
-                Overtime Salary: {OvertimeHours} * ${HourlyRate} * {HourlyOvertimePercentage}x = ${OvertimeSalary}
-                Story Point Traget: {StoryPointTarget} 
+                Hourly Overtime Percentage: {PayrollConstants.OvertimeRateMultiplier}x
+                Basic Salary: {BasicLoggedHours} * ${HourlyRate} = ${BasicSalary}
+                Overtime Salary: {OvertimeHours} * ${HourlyRate} * {PayrollConstants.OvertimeRateMultiplier}x = ${OvertimeSalary}
+                Tasks Traget: {TasksTarget} 
                 Bonus (if Target Achieved): ${Bonus}
-                Story Point: {StoryPoint}
+                Tasks Completed: {TasksCompleted}
                 Training Allowance: {TrainingAllowance}
                 Gross Pay: ${BasicSalary} + ${OvertimeSalary} + ${TrainingAllowance} + ${BonusAmount} = {GrossPay}
-                Tax Percentage: %{TaxPercentage:p}
+                Tax Percentage: %{PayrollConstants.TaxPercentage:p}
                 Tax Amount: ${TaxAmount:f2}
             ___________________________________________
                 
@@ -114,5 +65,4 @@ namespace EmployeesSalaryCalculationSystem
             return Report;
         }
     }
-
 }
